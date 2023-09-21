@@ -1,5 +1,5 @@
 <h1 align="center">OMenu️</h1>
-<p>
+<p align="center">
 <img alt="Static Badge" src="https://img.shields.io/badge/Language-C++-61DAFB?logo=c%2B%2B">
 <img alt="Static Badge" src="https://img.shields.io/badge/Platform-Windows-blue">
  <img alt="Version" src="https://img.shields.io/badge/version-1.1.2-hotpink.svg?cacheSeconds=2592000" />
