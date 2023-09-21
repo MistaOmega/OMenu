@@ -13,6 +13,7 @@
 ## Compatible APIs
   - DirectX9 (Directx9Ex)
   - DirectX12
+  - OpenGL
   
 ## Purpose
 This is a menu template upon which you can build any mod menu you like \
