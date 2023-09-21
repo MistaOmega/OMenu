@@ -20,4 +20,12 @@
 #include <d3d12.h>
 #include <dxgi1_4.h>
 
+// Dependencies
+#include "dependencies/imgui/imgui.h"
+#include "dependencies/imgui/imgui_impl_opengl3.h"
+#include "dependencies/imgui/imgui_impl_win32.h"
+#include "dependencies/minhook/MinHook.h"
+#include "dependencies/imgui/imgui_impl_dx12.h"
+#include "dependencies/imgui/imgui_impl_dx9.h"
+
 #endif //OMENU_PCH_H

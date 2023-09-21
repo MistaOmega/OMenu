@@ -6,7 +6,6 @@
 #define OMENU_MENU_H
 
 #include "../pch.h"
-#include "../dependencies/imgui/imgui.h"
 
 namespace Menu {
     void CreateImGuiForWindow(HWND hWnd);

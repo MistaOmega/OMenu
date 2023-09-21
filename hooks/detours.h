@@ -7,7 +7,6 @@
 
 #ifndef OMENU_DETOURS_H
 #define OMENU_DETOURS_H
-
 namespace Hooks {
     void Create();
 
