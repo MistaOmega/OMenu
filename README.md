@@ -30,7 +30,7 @@ Rendering::SetFramework(Framework::DIRECTX9);
 - Proceed to build your menu from this framework
 
 ## Key information
-- You'll find menu style under menu->menu.cpp->CreateStyle()
+- You'll find the menu style under menu->menu.cpp->CreateStyle()
 - Menu rendering is done within menu->menu.cpp->Render(), this is where you'll notice the menu button being drawn. Your menu design will go here, move it to a seperate function if you wish.
 - You can disable the debug console from within console->console.h, uncomment the DISABLE_LOGGING macro
 - You will find custom logging macros in console.h including PRINT_CUSTOM and PRINT_CUSTOM_COLOR you can use these to print standard, or colored text using the following format:
@@ -47,8 +47,8 @@ Which will print `[YourMenuName] ESP Loaded` in red, and your normal terminal ba
 By creating a `placeholder` or `dummy` device and swapchain (specifically for DirectX10 and later) and linking them to the console window handle. the program obtains a reference to the `vTable` in order to access the API's function addresses. It then release these resources as they're not used after acquiring the vTable. From there, `MinHook` is used to hook into specified methods, meaning the `ImGUI` code can be rendered.
 
 ### OpenGL
-Easier than DirectX that's for sure. OpenGL exports wglSwapBuffers, which is then hooked, much like using DirectX, but instead of creating a dummy device, the program gets the module handle of opengl32, then gets the exported function address directly. \
-From there, Minhook hooks in the custom method which handles the rendering of the menu
+Easier than DirectX that's for sure. OpenGL exports wglSwapBuffers, which is then hooked much like using DirectX. But instead of creating a dummy device, the program gets the module handle of opengl32, then gets the exported function address directly. \
+From there, Minhook hooks in the custom method which handles the rendering of the menu.
 ## Author
 
 👤 **MistaOmega**
