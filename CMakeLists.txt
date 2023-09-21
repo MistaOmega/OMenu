@@ -173,6 +173,8 @@ set(MINHOOK_SOURCES
         utils/config.h
         console/consolecolor.cpp
         console/consolecolor.h
+        hooks/opengl/hook_opengl.cpp
+        hooks/opengl/hook_opengl.h
 )
 
 # Create the shared library

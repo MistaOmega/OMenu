@@ -30,7 +30,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved) {
     if (fdwReason == DLL_PROCESS_ATTACH) {
         DisableThreadLibraryCalls(hinstDLL);
 
-        Rendering::SetFramework(Framework::DIRECTX9);
+        Rendering::SetFramework(Framework::OPENGL);
 
         HANDLE hHandle = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(OnProcessAttach), hinstDLL,
                                       0, nullptr);

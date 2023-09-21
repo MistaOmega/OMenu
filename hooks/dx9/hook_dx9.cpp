@@ -4,8 +4,6 @@
 #include "hook_dx9.h"
 #include "../../console/console.h"
 #include "../detours.h"
-#include "../../dependencies/minhook/MinHook.h"
-#include "../../dependencies/imgui/imgui_impl_dx9.h"
 #include "../../menu/menu.h"
 
 static IDirect3D9 *g_pD3D = nullptr;

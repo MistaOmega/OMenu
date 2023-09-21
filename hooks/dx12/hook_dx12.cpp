@@ -5,9 +5,6 @@
 #include "hook_dx12.h"
 #include "../../utils/utils.h"
 #include "../../console/console.h"
-#include "../../dependencies/minhook/MinHook.h"
-#include "../../dependencies/imgui/imgui_impl_dx12.h"
-#include "../../dependencies/imgui/imgui_impl_win32.h"
 #include "../../menu/menu.h"
 #include "../detours.h"
 

@@ -2,11 +2,10 @@
 // Created by jackn on 19/09/2023.
 //
 
-#include "menu.h"
-#include "../dependencies/imgui/imgui_impl_win32.h"
 #include "../console/console.h"
 #include "../hooks/detours.h"
 #include "../utils/utils.h"
+#include "menu.h"
 
 ImGuiStyle style;
 
@@ -22,7 +21,6 @@ namespace Menu {
         ImGuiIO &io = ImGui::GetIO();
         io.IniFilename = io.LogFilename = nullptr;
         PRINT_CUSTOM_COLOR(11, "[IMGUI]", "Menu initialized successfully \n");
-        PRINT_CUSTOM("[YourMenuName]", "ESP Loaded");
         CreateStyle();
     }
 

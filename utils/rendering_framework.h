@@ -8,7 +8,8 @@
 enum Framework {
     NONE = 0,
     DIRECTX9,
-    DIRECTX12
+    DIRECTX12,
+    OPENGL
 };
 
 namespace Rendering {
