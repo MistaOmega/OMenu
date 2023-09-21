@@ -22,6 +22,7 @@ namespace Menu {
         ImGuiIO &io = ImGui::GetIO();
         io.IniFilename = io.LogFilename = nullptr;
         PRINT_CUSTOM_COLOR(11, "[IMGUI]", "Menu initialized successfully \n");
+        PRINT_CUSTOM("[YourMenuName]", "ESP Loaded");
         CreateStyle();
     }
 

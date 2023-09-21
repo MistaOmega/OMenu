@@ -58,7 +58,7 @@
 #define PREFIX_OPERAND_SIZE 0x66
 #define PREFIX_ADDRESS_SIZE 0x67
 
-#pragma pack(push, 1)
+#pragma pack(push,1)
 
 typedef struct {
     uint8_t len;

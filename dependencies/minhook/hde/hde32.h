@@ -1,11 +1,11 @@
 ﻿/*
-* Hacker Disassembler Engine 32
-* Copyright (c) 2006-2009, Vyacheslav Patkov.
-* All rights reserved.
-*
-* hde32.h: C/C++ header file
-*
-*/
+ * Hacker Disassembler Engine 32
+ * Copyright (c) 2006-2009, Vyacheslav Patkov.
+ * All rights reserved.
+ *
+ * hde32.h: C/C++ header file
+ *
+ */
 
 #ifndef _HDE32_H_
 #define _HDE32_H_
@@ -57,7 +57,7 @@
 #define PREFIX_OPERAND_SIZE 0x66
 #define PREFIX_ADDRESS_SIZE 0x67
 
-#pragma pack(push, 1)
+#pragma pack(push,1)
 
 typedef struct {
     uint8_t len;

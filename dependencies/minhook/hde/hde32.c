@@ -11,8 +11,9 @@
 #include "hde32.h"
 #include "table32.h"
 
-unsigned int hde32_disasm(const void *code, hde32s *hs) {
-    uint8_t x, c, *p = (uint8_t *) code, cflags, opcode, pref = 0;
+unsigned int hde32_disasm(const void *code, hde32s *hs)
+{
+    uint8_t x, c, *p = (uint8_t *)code, cflags, opcode, pref = 0;
     uint8_t *ht = hde32_table, m_mod, m_reg, m_rm, disp_size = 0;
 
     memset(hs, 0, sizeof(hde32s));
@@ -31,12 +32,8 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
                 hs->p_lock = c;
                 pref |= PRE_LOCK;
                 break;
-            case 0x26:
-            case 0x2e:
-            case 0x36:
-            case 0x3e:
-            case 0x64:
-            case 0x65:
+            case 0x26: case 0x2e: case 0x36:
+            case 0x3e: case 0x64: case 0x65:
                 hs->p_seg = c;
                 pref |= PRE_SEG;
                 break;
@@ -51,9 +48,9 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
             default:
                 goto pref_done;
         }
-    pref_done:
+  pref_done:
 
-    hs->flags = (uint32_t) pref << 23;
+    hs->flags = (uint32_t)pref << 23;
 
     if (!pref)
         pref |= PRE_NONE;
@@ -81,9 +78,9 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
     x = 0;
     if (cflags & C_GROUP) {
         uint16_t t;
-        t = *(uint16_t *) (ht + (cflags & 0x7f));
-        cflags = (uint8_t) t;
-        x = (uint8_t) (t >> 8);
+        t = *(uint16_t *)(ht + (cflags & 0x7f));
+        cflags = (uint8_t)t;
+        x = (uint8_t)(t >> 8);
     }
 
     if (hs->opcode2) {
@@ -105,7 +102,7 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
         if (!hs->opcode2 && opcode >= 0xd9 && opcode <= 0xdf) {
             uint8_t t = opcode - 0xd9;
             if (m_mod == 3) {
-                ht = hde32_table + DELTA_FPU_MODRM + t * 8;
+                ht = hde32_table + DELTA_FPU_MODRM + t*8;
                 t = ht[m_reg] << m_rm;
             } else {
                 ht = hde32_table + DELTA_FPU_REG;
@@ -136,21 +133,20 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
                             break;
                     }
                 hs->flags |= F_ERROR | F_ERROR_LOCK;
-                no_lock_error:;
+              no_lock_error:
+                ;
             }
         }
 
         if (hs->opcode2) {
             switch (opcode) {
-                case 0x20:
-                case 0x22:
+                case 0x20: case 0x22:
                     m_mod = 3;
                     if (m_reg > 4 || m_reg == 1)
                         goto error_operand;
                     else
                         goto no_error_operand;
-                case 0x21:
-                case 0x23:
+                case 0x21: case 0x23:
                     m_mod = 3;
                     if (m_reg == 4 || m_reg == 5)
                         goto error_operand;
@@ -191,9 +187,7 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
             goto no_error_operand;
         } else if (hs->opcode2) {
             switch (opcode) {
-                case 0x50:
-                case 0xd7:
-                case 0xf7:
+                case 0x50: case 0xd7: case 0xf7:
                     if (pref & (PRE_NONE | PRE_66))
                         goto error_operand;
                     break;
@@ -208,9 +202,9 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
         } else
             goto no_error_operand;
 
-        error_operand:
+      error_operand:
         hs->flags |= F_ERROR | F_ERROR_OPERAND;
-        no_error_operand:
+      no_error_operand:
 
         c = *p++;
         if (m_reg <= 1) {
@@ -225,8 +219,9 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
                 if (pref & PRE_67) {
                     if (m_rm == 6)
                         disp_size = 2;
-                } else if (m_rm == 5)
-                    disp_size = 4;
+                } else
+                    if (m_rm == 5)
+                        disp_size = 4;
                 break;
             case 1:
                 disp_size = 1;
@@ -256,11 +251,11 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
                 break;
             case 2:
                 hs->flags |= F_DISP16;
-                hs->disp.disp16 = *(uint16_t *) p;
+                hs->disp.disp16 = *(uint16_t *)p;
                 break;
             case 4:
                 hs->flags |= F_DISP32;
-                hs->disp.disp32 = *(uint32_t *) p;
+                hs->disp.disp32 = *(uint32_t *)p;
                 break;
         }
         p += disp_size;
@@ -271,7 +266,7 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
         if (cflags & C_REL32) {
             if (pref & PRE_66) {
                 hs->flags |= F_IMM16 | F_RELATIVE;
-                hs->imm.imm16 = *(uint16_t *) p;
+                hs->imm.imm16 = *(uint16_t *)p;
                 p += 2;
                 goto disasm_done;
             }
@@ -279,11 +274,11 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
         }
         if (pref & PRE_66) {
             hs->flags |= F_IMM16;
-            hs->imm.imm16 = *(uint16_t *) p;
+            hs->imm.imm16 = *(uint16_t *)p;
             p += 2;
         } else {
             hs->flags |= F_IMM32;
-            hs->imm.imm32 = *(uint32_t *) p;
+            hs->imm.imm32 = *(uint32_t *)p;
             p += 4;
         }
     }
@@ -291,13 +286,13 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
     if (cflags & C_IMM16) {
         if (hs->flags & F_IMM32) {
             hs->flags |= F_IMM16;
-            hs->disp.disp16 = *(uint16_t *) p;
+            hs->disp.disp16 = *(uint16_t *)p;
         } else if (hs->flags & F_IMM16) {
             hs->flags |= F_2IMM16;
-            hs->disp.disp16 = *(uint16_t *) p;
+            hs->disp.disp16 = *(uint16_t *)p;
         } else {
             hs->flags |= F_IMM16;
-            hs->imm.imm16 = *(uint16_t *) p;
+            hs->imm.imm16 = *(uint16_t *)p;
         }
         p += 2;
     }
@@ -307,23 +302,23 @@ unsigned int hde32_disasm(const void *code, hde32s *hs) {
     }
 
     if (cflags & C_REL32) {
-        rel32_ok:
+      rel32_ok:
         hs->flags |= F_IMM32 | F_RELATIVE;
-        hs->imm.imm32 = *(uint32_t *) p;
+        hs->imm.imm32 = *(uint32_t *)p;
         p += 4;
     } else if (cflags & C_REL8) {
         hs->flags |= F_IMM8 | F_RELATIVE;
         hs->imm.imm8 = *p++;
     }
 
-    disasm_done:
+  disasm_done:
 
-    if ((hs->len = (uint8_t) (p - (uint8_t *) code)) > 15) {
+    if ((hs->len = (uint8_t)(p-(uint8_t *)code)) > 15) {
         hs->flags |= F_ERROR | F_ERROR_LENGTH;
         hs->len = 15;
     }
 
-    return (unsigned int) hs->len;
+    return (unsigned int)hs->len;
 }
 
 #endif // defined(_M_IX86) || defined(__i386__)
