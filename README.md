@@ -11,7 +11,7 @@
 > ImGUI menu template for various graphic rendering frameworks 
 
 ## Compatible APIs
-  - DirectX9 (Directx9Ex)
+  - DirectX9 (DirectX9Ex)
   - DirectX12
   - OpenGL
   
