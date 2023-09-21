@@ -2,7 +2,7 @@
 <p>
 <img alt="Static Badge" src="https://img.shields.io/badge/Language-C++-61DAFB?logo=c%2B%2B">
 <img alt="Static Badge" src="https://img.shields.io/badge/Platform-Windows-blue">
- <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-hotpink.svg?cacheSeconds=2592000" />
+ <img alt="Version" src="https://img.shields.io/badge/version-1.1.2-hotpink.svg?cacheSeconds=2592000" />
   <a href="https://choosealicense.com/licenses/mit/" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
@@ -13,6 +13,7 @@
 ## Compatible APIs
   - DirectX9 (Directx9Ex)
   - DirectX12
+  - OpenGL
   
 ## Purpose
 This is a menu template upon which you can build any mod menu you like \
@@ -30,7 +31,7 @@ Rendering::SetFramework(Framework::DIRECTX9);
 - Proceed to build your menu from this framework
 
 ## Key information
-- You'll find menu style under menu->menu.cpp->CreateStyle()
+- You'll find the menu style under menu->menu.cpp->CreateStyle()
 - Menu rendering is done within menu->menu.cpp->Render(), this is where you'll notice the menu button being drawn. Your menu design will go here, move it to a seperate function if you wish.
 - You can disable the debug console from within console->console.h, uncomment the DISABLE_LOGGING macro
 - You will find custom logging macros in console.h including PRINT_CUSTOM and PRINT_CUSTOM_COLOR you can use these to print standard, or colored text using the following format:
@@ -45,6 +46,10 @@ Which will print `[YourMenuName] ESP Loaded` in red, and your normal terminal ba
 
 ### DirectX
 By creating a `placeholder` or `dummy` device and swapchain (specifically for DirectX10 and later) and linking them to the console window handle. the program obtains a reference to the `vTable` in order to access the API's function addresses. It then release these resources as they're not used after acquiring the vTable. From there, `MinHook` is used to hook into specified methods, meaning the `ImGUI` code can be rendered.
+
+### OpenGL
+Easier than DirectX that's for sure. OpenGL exports wglSwapBuffers, which is then hooked much like using DirectX. But instead of creating a dummy device, the program gets the module handle of opengl32, then gets the exported function address directly. \
+From there, Minhook hooks in the custom method which handles the rendering of the menu.
 ## Author
 
 👤 **MistaOmega**
@@ -54,7 +59,7 @@ By creating a `placeholder` or `dummy` device and swapchain (specifically for Di
 ## Todo
 - DX10
 - DX11
-- OpenGL
+- ~~OpenGL~~
 - Vulkan
 
 Note that the ImGUI implementation classes for these APIs are already in the project, but there is no hooking code for these functions yet.
