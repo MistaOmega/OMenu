@@ -2,7 +2,7 @@
 <p align="center">
 <img alt="Static Badge" src="https://img.shields.io/badge/Language-C++-61DAFB?logo=c%2B%2B">
 <img alt="Static Badge" src="https://img.shields.io/badge/Platform-Windows-blue">
- <img alt="Version" src="https://img.shields.io/badge/version-1.1.2-hotpink.svg?cacheSeconds=2592000" />
+ <img alt="Version" src="https://img.shields.io/badge/version-1.2.1-hotpink.svg?cacheSeconds=2592000" />
   <a href="https://choosealicense.com/licenses/mit/" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
@@ -12,6 +12,7 @@
 
 ## Compatible APIs
   - DirectX9 (DirectX9Ex)
+  - DirectX10
   - DirectX12
   - OpenGL
   
@@ -57,7 +58,7 @@ From there, Minhook hooks in the custom method which handles the rendering of th
 * Github: [@MistaOmega](https://github.com/MistaOmega)
   
 ## Todo
-- DX10
+- ~~DX10~~
 - DX11
 - ~~OpenGL~~
 - Vulkan
