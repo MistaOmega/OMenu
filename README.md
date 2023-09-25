@@ -8,7 +8,7 @@
   </a>
 </p>
 
-> ImGUI menu template for various graphic rendering frameworks 
+> ImGUI menu injection template for various graphic rendering frameworks 
 
 ## Compatible APIs
   - DirectX9 (DirectX9Ex)
