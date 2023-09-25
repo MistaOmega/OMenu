@@ -1,7 +1,6 @@
 //
 // Created by jackn on 19/09/2023.
 //
-
 #include "hook_dx12.h"
 #include "../../utils/utils.h"
 #include "../../console/console.h"
@@ -20,7 +19,7 @@ static ID3D12CommandAllocator *gCommandAllocators[NUM_BACK_BUFFERS] = {};
 static ID3D12Resource *gMainRenderTargetResource[NUM_BACK_BUFFERS] = {};
 static D3D12_CPU_DESCRIPTOR_HANDLE gMainRenderTargetDescriptor[NUM_BACK_BUFFERS] = {};
 
-static bool CreateDeviceD3D12(HWND hwnd) {
+static bool CreateD3D12RenderDevice(HWND hwnd) {
     // Setup swap chain
     DXGI_SWAP_CHAIN_DESC1 chainDesc = {};
     chainDesc.BufferCount = NUM_BACK_BUFFERS;
@@ -185,7 +184,7 @@ static void RenderImGui_DX12(IDXGISwapChain3 *pSwapChain) {
     }
     ImGui::GetIO().MouseDrawCursor = Menu::showMenu;
 
-    if (Hooks::hooked) {
+    if (Hooks::Hooked) {
         if (!gMainRenderTargetResource[0]) {
             CreateRenderTarget(pSwapChain);
         }
@@ -349,7 +348,7 @@ static void WINAPI hkExecuteCommandLists(ID3D12CommandQueue *pCommandQueue,
 //region hook initialisation and release
 void DirectX12::Hook(HWND hwnd) {
     // Attempt to create a DirectX 12 rendering device
-    if (!CreateDeviceD3D12(GetConsoleWindow())) {
+    if (!CreateD3D12RenderDevice(GetConsoleWindow())) {
         // If creation fails, print an error message and return
         PRINT_ERROR_COLOR(FOREGROUND_RED | FOREGROUND_INTENSITY, "[CRITICAL] Failed to create DX12 Rendering Device.")
         return;

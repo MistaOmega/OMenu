@@ -8,6 +8,7 @@
 enum Framework {
     NONE = 0,
     DIRECTX9,
+    DIRECTX11,
     DIRECTX12,
     OPENGL
 };

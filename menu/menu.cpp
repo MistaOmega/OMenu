@@ -32,7 +32,7 @@ namespace Menu {
 
         ImGui::SetCursorPos(ImVec2(8.000f, 250.000f));
         if (ImGui::Button(("EXIT"), ImVec2(0.000f, 0.000f))) {
-            Hooks::hooked = false;
+            Hooks::Hooked = false;
             Utils::UnloadDLL();
         }
         ImGui::End();

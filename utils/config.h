@@ -49,7 +49,7 @@ inline MenuVars &menuVars() {
         return menuVars;
     }
     catch (...) {
-        Hooks::hooked = false;
+        Hooks::Hooked = false;
     };
 }
 
