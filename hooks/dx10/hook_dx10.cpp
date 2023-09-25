@@ -2,18 +2,17 @@
 // Created by jackn on 25/09/2023.
 //
 
-#include "hook_dx11.h"
+#include "hook_dx10.h"
 #include "../../console/console.h"
 #include "../../utils/utils.h"
 #include "../../menu/menu.h"
 #include "../detours.h"
 
-static ID3D11Device *gPd3DDevice = nullptr;
-static ID3D11DeviceContext *gPd3DDeviceContext = nullptr;
-static ID3D11RenderTargetView *gPd3DRenderTarget = nullptr;
+static ID3D10Device *gPd3DDevice = nullptr;
+static ID3D10RenderTargetView *gPd3DRenderTarget = nullptr;
 static IDXGISwapChain *gPSwapChain = nullptr;
 
-static bool CreateD3D11RenderDevice(HWND hWnd) {
+static bool CreateD3D10RenderDevice(HWND hWnd) {
     // Create the D3DDevice
     DXGI_SWAP_CHAIN_DESC swpDesc = {};
     swpDesc.Windowed = TRUE;
@@ -23,16 +22,10 @@ static bool CreateD3D11RenderDevice(HWND hWnd) {
     swpDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swpDesc.BufferCount = 2;
 
-    const D3D_FEATURE_LEVEL featureLevels[] = {
-            D3D_FEATURE_LEVEL_11_0,
-            D3D_FEATURE_LEVEL_10_0,
-    };
-    HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_NULL, nullptr, 0, featureLevels, 2,
-                                               D3D11_SDK_VERSION, &swpDesc, &gPSwapChain, &gPd3DDevice, nullptr,
-                                               nullptr);
+    HRESULT hr = D3D10CreateDeviceAndSwapChain(nullptr, D3D10_DRIVER_TYPE_NULL, nullptr, 0, D3D10_SDK_VERSION, &swpDesc, &gPSwapChain, &gPd3DDevice);
     if (hr != S_OK) {
         PRINT_ERROR_COLOR(FOREGROUND_RED | FOREGROUND_INTENSITY,
-                          "[CRITICAL] Unable to create D3D11 Device and Swap Chain. [val: %lu]\n", hr)
+                          "[CRITICAL] Unable to create D3D10 Device and Swap Chain. [val: %lu]\n", hr)
         return false;
     }
 
@@ -40,14 +33,14 @@ static bool CreateD3D11RenderDevice(HWND hWnd) {
 }
 
 static void CreateRenderTarget(IDXGISwapChain *pSwapChain) {
-    ID3D11Texture2D *pBackBuffer = nullptr;
+    ID3D10Texture2D *pBackBuffer = nullptr;
     pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
     if (pBackBuffer) {
         DXGI_SWAP_CHAIN_DESC swpDesc;
         pSwapChain->GetDesc(&swpDesc);
-        D3D11_RENDER_TARGET_VIEW_DESC targDesc = {};
+        D3D10_RENDER_TARGET_VIEW_DESC targDesc = {};
         targDesc.Format = static_cast<DXGI_FORMAT>(Utils::ConvertToNonSRGBFormat(swpDesc.BufferDesc.Format));
-        targDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+        targDesc.ViewDimension = D3D10_RTV_DIMENSION_TEXTURE2D;
 
         gPd3DDevice->CreateRenderTargetView(pBackBuffer, &targDesc, &gPd3DRenderTarget);
         pBackBuffer->Release();
@@ -61,16 +54,12 @@ static void CleanupRenderTarget() {
     }
 }
 
-static void CleanupD3D11Device() {
+static void CleanupD3D10Device() {
     CleanupRenderTarget();
 
     if (gPSwapChain) {
         gPSwapChain->Release();
         gPSwapChain = nullptr;
-    }
-    if (gPd3DDeviceContext) {
-        gPd3DDeviceContext->Release();
-        gPd3DDeviceContext = nullptr;
     }
     if (gPd3DDevice) {
         gPd3DDevice->Release();
@@ -79,11 +68,10 @@ static void CleanupD3D11Device() {
 
 }
 
-static void RenderImGui_DX11(IDXGISwapChain *pSwapChain) {
+static void RenderImGui_DX10(IDXGISwapChain *pSwapChain) {
     if (!ImGui::GetIO().BackendRendererUserData) {
         if (SUCCEEDED(pSwapChain->GetDevice(IID_PPV_ARGS(&gPd3DDevice)))) {
-            gPd3DDevice->GetImmediateContext(&gPd3DDeviceContext);
-            ImGui_ImplDX11_Init(gPd3DDevice, gPd3DDeviceContext);
+            ImGui_ImplDX10_Init(gPd3DDevice);
         }
     }
     ImGui::GetIO().MouseDrawCursor = Menu::showMenu;
@@ -93,7 +81,7 @@ static void RenderImGui_DX11(IDXGISwapChain *pSwapChain) {
         }
 
         if (ImGui::GetCurrentContext() && gPd3DRenderTarget) {
-            ImGui_ImplDX11_NewFrame();
+            ImGui_ImplDX10_NewFrame();
             ImGui_ImplWin32_NewFrame();
             ImGui::NewFrame();
 
@@ -101,8 +89,8 @@ static void RenderImGui_DX11(IDXGISwapChain *pSwapChain) {
 
             ImGui::Render();
 
-            gPd3DDeviceContext->OMSetRenderTargets(1, &gPd3DRenderTarget, nullptr);
-            ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+            gPd3DDevice->OMSetRenderTargets(1, &gPd3DRenderTarget, nullptr);
+            ImGui_ImplDX10_RenderDrawData(ImGui::GetDrawData());
         }
     }
 }
@@ -113,7 +101,7 @@ static std::add_pointer_t<HRESULT WINAPI(IDXGISwapChain *, UINT, UINT)> oPresent
 static HRESULT WINAPI hkPresent(IDXGISwapChain *pSwapChain,
                                 UINT SyncInterval,
                                 UINT Flags) {
-    RenderImGui_DX11(pSwapChain);
+    RenderImGui_DX10(pSwapChain);
 
     return oPresent(pSwapChain, SyncInterval, Flags);
 }
@@ -124,7 +112,7 @@ static HRESULT WINAPI hkPresent1(IDXGISwapChain *pSwapChain,
                                  UINT SyncInterval,
                                  UINT PresentFlags,
                                  const DXGI_PRESENT_PARAMETERS *pPresentParameters) {
-    RenderImGui_DX11(pSwapChain);
+    RenderImGui_DX10(pSwapChain);
 
     return oPresent1(pSwapChain, SyncInterval, PresentFlags, pPresentParameters);
 }
@@ -215,9 +203,9 @@ static HRESULT WINAPI hkCreateSwapChainForComposition(IDXGIFactory *pFactory,
 }
 
 
-void DirectX11::Hook(HWND hWnd) {
-    if (!CreateD3D11RenderDevice(GetConsoleWindow( ))) {
-        PRINT_ERROR_COLOR(FOREGROUND_RED | FOREGROUND_INTENSITY, "[CRITICAL] Failed to create DX11 Rendering Device.")
+void DirectX10::Hook(HWND hWnd) {
+    if (!CreateD3D10RenderDevice(GetConsoleWindow( ))) {
+        PRINT_ERROR_COLOR(FOREGROUND_RED | FOREGROUND_INTENSITY, "[CRITICAL] Failed to create DX10 Rendering Device.")
         return;
     }
 
@@ -262,7 +250,7 @@ void DirectX11::Hook(HWND hWnd) {
         void* fnResizeBuffers = pVTable[13];
         void* fnResizeBuffers1 = pVTable[39];
 
-        CleanupD3D11Device();
+        CleanupD3D10Device();
 
         // Hook IDXGIFactory::CreateSwapChain
         if (MH_CreateHook(reinterpret_cast<void **>(fnCreateSwapChain), reinterpret_cast<void **>(&hkCreateSwapChain),
@@ -314,6 +302,7 @@ void DirectX11::Hook(HWND hWnd) {
                           reinterpret_cast<void **>(&oPresent)) == MH_OK) {
             PRINT("Hooked IDXGISwapChain::Present successfully");
             MH_EnableHook(fnPresent);
+            MH_EnableHook(fnPresent);
         }
 
         // Hook IDXGISwapChain1::Present1
@@ -327,10 +316,10 @@ void DirectX11::Hook(HWND hWnd) {
 
 }
 
-void DirectX11::Unhook() {
+void DirectX10::Unhook() {
     if (ImGui::GetCurrentContext()) {
         if (ImGui::GetIO().BackendRendererUserData)
-            ImGui_ImplDX11_Shutdown();
+            ImGui_ImplDX10_Shutdown();
 
         if (ImGui::GetIO().BackendPlatformUserData)
             ImGui_ImplWin32_Shutdown();
@@ -338,5 +327,5 @@ void DirectX11::Unhook() {
         ImGui::DestroyContext();
     }
 
-    CleanupD3D11Device();
+    CleanupD3D10Device();
 }
