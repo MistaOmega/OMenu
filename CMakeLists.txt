@@ -119,6 +119,7 @@ set(SOURCES
         hooks/detours.h
         hooks/detours.cpp
         library.h
+        hooks/dx11/hook_dx11.cpp
 )
 
 # ImGui source files
@@ -175,6 +176,8 @@ set(MINHOOK_SOURCES
         console/consolecolor.h
         hooks/opengl/hook_opengl.cpp
         hooks/opengl/hook_opengl.h
+        hooks/dx11/hook_dx11.cpp
+        hooks/dx11/hook_dx11.h
 )
 
 # Create the shared library

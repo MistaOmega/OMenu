@@ -3,6 +3,7 @@
 //
 #include "detours.h"
 #include "dx9/hook_dx9.h"
+#include "dx11/hook_dx11.h"
 #include "dx12/hook_dx12.h"
 #include "opengl/hook_opengl.h"
 #include "../utils/rendering_framework.h"
@@ -21,7 +22,7 @@ LRESULT ImGUIWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             Menu::showMenu = !Menu::showMenu;
             return true;
         } else if (wParam == VK_END) {
-            Hooks::hooked = false;
+            Hooks::Hooked = false;
             Utils::UnloadDLL();
             return true;
         }
@@ -104,6 +105,9 @@ namespace Hooks {
             case DIRECTX9:
                 DirectX9::Hook(gHWindow);
                 break;
+            case DIRECTX11:
+                DirectX11::Hook(gHWindow);
+                break;
             case DIRECTX12:
                 DirectX12::Hook(gHWindow);
                 break;
@@ -136,6 +140,9 @@ namespace Hooks {
         switch (framework) {
             case DIRECTX9:
                 DirectX9::Unhook();
+                break;
+            case DIRECTX11:
+                DirectX11::Unhook();
                 break;
             case DIRECTX12:
                 DirectX12::Unhook();

@@ -12,7 +12,7 @@ namespace Hooks {
 
     void Release();
 
-    inline bool hooked = true;
+    inline bool Hooked = true;
 }
 
 #endif //OMENU_DETOURS_H

@@ -11,7 +11,7 @@
 // Define a pointer to the original function
 static std::add_pointer_t<BOOL WINAPI(HDC)> oWglSwapBuffers;
 static BOOL WINAPI hkWglSwapBuffers(HDC hDC) {
-    if (Hooks::hooked && ImGui::GetCurrentContext()) {
+    if (Hooks::Hooked && ImGui::GetCurrentContext()) {
         if (!ImGui::GetIO().BackendRendererUserData) {
             ImGui_ImplOpenGL3_Init();
         }

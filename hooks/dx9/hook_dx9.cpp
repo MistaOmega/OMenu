@@ -88,7 +88,7 @@ static bool CreateD3D9RenderDevice(HWND hWnd) {
     D3DCAPS9 caps;
     HRESULT hr = g_pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
     if (hr != D3D_OK) {
-        PRINT_ERROR_COLOR(FOREGROUND_RED, "DirectX9: Error on GetDeviceCaps. [%lu]\n", hr);
+        PRINT_ERROR_COLOR(FOREGROUND_RED, "DirectX9: Error on GetDeviceCaps. [val: %lu]\n", hr);
         return false;
     }
 
@@ -101,7 +101,7 @@ static bool CreateD3D9RenderDevice(HWND hWnd) {
 
     hr = g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, behaviorFlags, &d3dpp, &g_pd3dDevice);
     if (hr != D3D_OK) {
-        PRINT_ERROR("DirectX9: Error on CreateDevice. [%lu]\n", hr);
+        PRINT_ERROR("DirectX9: Error on CreateDevice. [val: %lu]\n", hr);
         return false;
     }
 
@@ -115,7 +115,7 @@ static void Render(IDirect3DDevice9 *pDevice) {
     }
     ImGui::GetIO().MouseDrawCursor = Menu::showMenu;
 
-    if (Hooks::hooked && ImGui::GetCurrentContext()) {
+    if (Hooks::Hooked && ImGui::GetCurrentContext()) {
 
         DWORD SRGBWriteEnable;
         pDevice->GetRenderState(D3DRS_SRGBWRITEENABLE, &SRGBWriteEnable);
