@@ -108,18 +108,30 @@ set(DEPENDENCIES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies")
 set(SOURCES
         library.cpp
         pch.h
+        hooks/detours.h
+        hooks/detours.cpp
         hooks/dx9/hook_dx9.cpp
         hooks/dx9/hook_dx9.h
+        hooks/dx10/hook_dx10.cpp
+        hooks/dx10/hook_dx10.h
+        hooks/dx11/hook_dx11.cpp
+        hooks/dx11/hook_dx11.h
+        hooks/dx12/hook_dx12.cpp
+        hooks/dx12/hook_dx12.h
+        hooks/opengl/hook_opengl.cpp
+        hooks/opengl/hook_opengl.h
         utils/rendering_framework.cpp
         utils/rendering_framework.h
         utils/utils.cpp
         utils/utils.h
         console/console.cpp
         console/console.h
-        hooks/detours.h
-        hooks/detours.cpp
         library.h
-        hooks/dx11/hook_dx11.cpp
+        menu/menu.cpp
+        menu/menu.h
+        utils/config.h
+        console/consolecolor.cpp
+        console/consolecolor.h
 )
 
 # ImGui source files
@@ -167,17 +179,6 @@ set(MINHOOK_SOURCES
         ${DEPENDENCIES_DIR}/minhook/hde/pstdint.h
         ${DEPENDENCIES_DIR}/minhook/hde/table32.h
         ${DEPENDENCIES_DIR}/minhook/hde/table64.h
-        hooks/dx12/hook_dx12.cpp
-        hooks/dx12/hook_dx12.h
-        menu/menu.cpp
-        menu/menu.h
-        utils/config.h
-        console/consolecolor.cpp
-        console/consolecolor.h
-        hooks/opengl/hook_opengl.cpp
-        hooks/opengl/hook_opengl.h
-        hooks/dx11/hook_dx11.cpp
-        hooks/dx11/hook_dx11.h
 )
 
 # Create the shared library

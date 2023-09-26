@@ -13,6 +13,7 @@
 ## Compatible APIs
   - DirectX9 (DirectX9Ex)
   - DirectX10
+  - DirectX11
   - DirectX12
   - OpenGL
   
@@ -58,9 +59,9 @@ From there, Minhook hooks in the custom method which handles the rendering of th
 * Github: [@MistaOmega](https://github.com/MistaOmega)
   
 ## Todo
-- ~~DX10~~
-- DX11
-- ~~OpenGL~~
+- [x] DX10
+- [x] DX11
+- [x] OpenGL
 - Vulkan
 
 Note that the ImGUI implementation classes for these APIs are already in the project, but there is no hooking code for these functions yet.

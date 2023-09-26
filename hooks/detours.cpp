@@ -9,6 +9,7 @@
 #include "../utils/rendering_framework.h"
 #include "../utils/utils.h"
 #include "../menu/menu.h"
+#include "dx10/hook_dx10.h"
 
 static HWND gHWindow = nullptr;
 
@@ -105,6 +106,9 @@ namespace Hooks {
             case DIRECTX9:
                 DirectX9::Hook(gHWindow);
                 break;
+            case DIRECTX10:
+                DirectX10::Hook(gHWindow);
+                break;
             case DIRECTX11:
                 DirectX11::Hook(gHWindow);
                 break;
@@ -140,6 +144,9 @@ namespace Hooks {
         switch (framework) {
             case DIRECTX9:
                 DirectX9::Unhook();
+                break;
+            case DIRECTX10:
+                DirectX10::Unhook();
                 break;
             case DIRECTX11:
                 DirectX11::Unhook();
