@@ -222,7 +222,7 @@ void DirectX11::Hook(HWND hWnd) {
     }
 
     PRINT_COLOR(FOREGROUND_GREEN | FOREGROUND_INTENSITY,
-                "DirectX10: Dummy device creation successful. Pointer addresses: ")
+                "DirectX11: Dummy device creation successful. Pointer addresses: ")
     PRINT("gPd3DDevice: 0x%p", gPd3DDevice);
     PRINT("gPSwapChain: 0x%p", gPSwapChain);
 
