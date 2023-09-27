@@ -2,7 +2,7 @@
 <p align="center">
 <img alt="Static Badge" src="https://img.shields.io/badge/Language-C++-61DAFB?logo=c%2B%2B">
 <img alt="Static Badge" src="https://img.shields.io/badge/Platform-Windows-blue">
- <img alt="Version" src="https://img.shields.io/badge/version-1.3.2-hotpink.svg?cacheSeconds=2592000" />
+ <img alt="Version" src="https://img.shields.io/badge/version-1.3.3-hotpink.svg?cacheSeconds=2592000" />
   <a href="https://choosealicense.com/licenses/mit/" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>

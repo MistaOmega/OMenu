@@ -35,7 +35,7 @@ namespace DebugConsole {
         fclose(stdin);
         fclose(stdout);
         fclose(stderr);
-        if (!Hooks::Hooked) {
+        if (Hooks::Hooked) {
             FreeConsole();
             PostMessage(GetConsoleWindow(), WM_CLOSE, 0,
                         0); // force close the window, if we re-inject we get a console back
