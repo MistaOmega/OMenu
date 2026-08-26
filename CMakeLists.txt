@@ -1,105 +1,34 @@
-#cmake_minimum_required(VERSION 3.23)
-#project(OMenu)
-#set(CMAKE_CXX_STANDARD 17)
-#find_library(D3DX9
-#    NAMES d3dx9
-#    HINTS "C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)/Lib/x86"
-#)
-#find_package(Vulkan REQUIRED)
-#include_directories("C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)/Include")
-#
-# add_compile_definitions(IMGUI_USER_CONFIG="my_imgui_config.h")
-#
-#add_library(OMenu SHARED
-#        library.cpp
-#        pch.h
-#        hooks/dx9/hook_dx9.cpp
-#        hooks/dx9/hook_dx9.h
-#        utils/rendering_backend.cpp
-#        utils/rendering_backend.h
-#        utils/utils.cpp
-#        utils/utils.h
-#        console/console.cpp
-#        console/console.h
-#        hooks/detours.h
-#        hooks/detours.cpp
-#        gh_d3d9.cpp
-#        dependencies/imgui/imconfig.h
-#        dependencies/imgui/imgui.cpp
-#        dependencies/imgui/imgui.h
-#        dependencies/imgui/imgui_demo.cpp
-#        dependencies/imgui/imgui_draw.cpp
-#        dependencies/imgui/imgui_impl_dx9.cpp
-#        dependencies/imgui/imgui_impl_dx9.h
-#        dependencies/imgui/imgui_impl_dx10.cpp
-#        dependencies/imgui/imgui_impl_dx10.h
-#        dependencies/imgui/imgui_impl_dx11.cpp
-#        dependencies/imgui/imgui_impl_dx11.h
-#        dependencies/imgui/imgui_impl_dx12.cpp
-#        dependencies/imgui/imgui_impl_dx12.h
-#        dependencies/imgui/imgui_impl_opengl3.cpp
-#        dependencies/imgui/imgui_impl_opengl3.h
-#        dependencies/imgui/imgui_impl_opengl3_loader.h
-#        dependencies/imgui/imgui_impl_vulkan.cpp
-#        dependencies/imgui/imgui_impl_vulkan.h
-#        dependencies/imgui/imgui_impl_win32.cpp
-#        dependencies/imgui/imgui_impl_win32.h
-#        dependencies/imgui/imgui_internal.h
-#        dependencies/imgui/imgui_tables.cpp
-#        dependencies/imgui/imgui_widgets.cpp
-#        dependencies/imgui/imstb_rectpack.h
-#        dependencies/imgui/imstb_textedit.h
-#        dependencies/imgui/imstb_truetype.h
-#        dependencies/minhook/buffer.c
-#        dependencies/minhook/buffer.h
-#        dependencies/minhook/hook.c
-#        dependencies/minhook/MinHook.h
-#        dependencies/minhook/trampoline.c
-#        dependencies/minhook/trampoline.h
-#        dependencies/minhook/hde/hde32.c
-#        dependencies/minhook/hde/hde32.h
-#        dependencies/minhook/hde/hde64.c
-#        dependencies/minhook/hde/hde64.h
-#        dependencies/minhook/hde/pstdint.h
-#        dependencies/minhook/hde/table32.h
-#        dependencies/minhook/hde/table64.h
-#)
-#
-#
-#
-#target_link_libraries(OMenu ${D3DX9})
-#target_link_libraries(OMenu Vulkan::Vulkan)
-#set(LIBS d3d9 d3d10 dxgi d3d11 d3d12)
-#target_link_libraries(OMenu ${LIBS})
-#target_precompile_headers(OMenu PRIVATE
-#        "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/pch.h>")
-#
-#
-#
-#
-
 cmake_minimum_required(VERSION 3.23)
 project(OMenu)
 set(CMAKE_CXX_STANDARD 17)
 
-# Define the DirectX SDK paths
 set(DIRECTX_SDK_DIR "C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)")
-set(DIRECTX_LIB_DIR "${DIRECTX_SDK_DIR}/Lib/x86")
-set(DIRECTX_LIB_DIR "${DIRECTX_SDK_DIR}/Lib/x64")
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(DIRECTX_LIB_DIR "${DIRECTX_SDK_DIR}/Lib/x64")
+else ()
+    set(DIRECTX_LIB_DIR "${DIRECTX_SDK_DIR}/Lib/x86")
+endif ()
 set(DIRECTX_INCLUDE_DIR "${DIRECTX_SDK_DIR}/Include")
 
-
-# Find and link to the DirectX libraries
+# D3DX9 is optional, only bother linking if the legacy SDK is installed.
 find_library(D3DX9
         NAMES d3dx9
         HINTS "${DIRECTX_LIB_DIR}"
 )
+if (D3DX9)
+    message(STATUS "D3DX9 found, linking it")
+    include_directories("${DIRECTX_INCLUDE_DIR}")
+else ()
+    message(STATUS "D3DX9 not found, skipping (install the legacy DirectX SDK if you add D3DX-based features like texture loading)")
+endif ()
 
-# Find the Vulkan package (assumes you have Vulkan installed)
-find_package(Vulkan REQUIRED)
-
-# Include the DirectX SDK headers
-include_directories("${DIRECTX_INCLUDE_DIR}")
+# Optional, Vulkan isn't impled yet.
+find_package(Vulkan QUIET)
+if (Vulkan_FOUND)
+    message(STATUS "Vulkan SDK found, building imgui_impl_vulkan")
+else ()
+    message(STATUS "Vulkan SDK not found, skipping imgui_impl_vulkan (install the Vulkan SDK to enable it)")
+endif ()
 
 # Define dependencies path
 set(DEPENDENCIES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies")
@@ -152,8 +81,6 @@ set(IMGUI_SOURCES
         ${DEPENDENCIES_DIR}/imgui/imgui_impl_opengl3.cpp
         ${DEPENDENCIES_DIR}/imgui/imgui_impl_opengl3.h
         ${DEPENDENCIES_DIR}/imgui/imgui_impl_opengl3_loader.h
-        ${DEPENDENCIES_DIR}/imgui/imgui_impl_vulkan.cpp
-        ${DEPENDENCIES_DIR}/imgui/imgui_impl_vulkan.h
         ${DEPENDENCIES_DIR}/imgui/imgui_impl_win32.cpp
         ${DEPENDENCIES_DIR}/imgui/imgui_impl_win32.h
         ${DEPENDENCIES_DIR}/imgui/imgui_internal.h
@@ -184,10 +111,19 @@ set(MINHOOK_SOURCES
 # Create the shared library
 add_library(OMenu SHARED ${SOURCES} ${IMGUI_SOURCES} ${MINHOOK_SOURCES})
 
+if (Vulkan_FOUND)
+    target_sources(OMenu PRIVATE
+            ${DEPENDENCIES_DIR}/imgui/imgui_impl_vulkan.cpp
+            ${DEPENDENCIES_DIR}/imgui/imgui_impl_vulkan.h
+    )
+    target_link_libraries(OMenu Vulkan::Vulkan)
+endif ()
+
 # Link libraries
 set(LIBS d3d9 d3d10 dxgi d3d11 d3d12 dxguid)
-target_link_libraries(OMenu ${D3DX9})
-target_link_libraries(OMenu Vulkan::Vulkan)
+if (D3DX9)
+    target_link_libraries(OMenu ${D3DX9})
+endif ()
 target_link_libraries(OMenu ${LIBS})
 
 ADD_COMPILE_DEFINITIONS(IMGUI_USER_CONFIG="my_imgui_config.h")
