@@ -11,18 +11,25 @@ ImGuiStyle style;
 
 namespace Menu {
 
-    void CreateImGuiForWindow(HWND hWnd) {
+    bool CreateContext() {
         if (ImGui::GetCurrentContext())
-            return;
+            return false;
 
         ImGui::CreateContext();
-        ImGui_ImplWin32_Init(hWnd);
 
         ImGuiIO &io = ImGui::GetIO();
         io.IniFilename = io.LogFilename = nullptr;
         PRINT_CUSTOM_COLOR(11, "[IMGUI]", "Menu initialized successfully \n");
         CreateStyle();
+        return true;
     }
+
+#ifdef _WIN32
+    void CreateImGuiForWindow(HWND hWnd) {
+        if (CreateContext())
+            ImGui_ImplWin32_Init(hWnd);
+    }
+#endif
 
     void Render() {
         if (!showMenu)

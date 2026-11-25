@@ -4,12 +4,41 @@
 #include "console.h"
 #include "../hooks/detours.h"
 
+#ifndef _WIN32
+#include <sys/ioctl.h>
+#include <unistd.h>
+#endif
+
 // Function to calculate the centering padding
 int CalculatePadding(int consoleWidth, int lineLength) {
     return (consoleWidth - lineLength) / 2;
 }
 
+static int GetConsoleWidth() {
+#ifdef _WIN32
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
+        return csbi.dwSize.X;
+#else
+    winsize ws{};
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == 0 && ws.ws_col > 0)
+        return ws.ws_col;
+#endif
+    return 80;
+}
+
 namespace DebugConsole {
+#ifndef _WIN32
+    // Linux just uses the game's stdout, nothing to alloc or free
+    bool Alloc() {
+#ifndef DISABLE_LOGGING
+        PrintTitle();
+#endif
+        return true;
+    }
+
+    void Release() {}
+#else
     bool Alloc() {
 #ifndef DISABLE_LOGGING
         if (AllocConsole()) {
@@ -44,13 +73,10 @@ namespace DebugConsole {
         }
 #endif
     }
+#endif
 
     void PrintTitle() {
-        // Get the console handle and determine the console width (Windows-specific)
-        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-        CONSOLE_SCREEN_BUFFER_INFO csbi;
-        GetConsoleScreenBufferInfo(hConsole, &csbi);
-        int consoleWidth = csbi.dwSize.X;
+        int consoleWidth = GetConsoleWidth();
 
         std::vector<int> rainbowColors = {
                 FOREGROUND_RED | FOREGROUND_INTENSITY,

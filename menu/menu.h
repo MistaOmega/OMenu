@@ -8,7 +8,12 @@
 #include "../pch.h"
 
 namespace Menu {
+    // false if we already have a context
+    bool CreateContext();
+
+#ifdef _WIN32
     void CreateImGuiForWindow(HWND hWnd);
+#endif
 
     void Render();
 

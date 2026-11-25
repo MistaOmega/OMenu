@@ -6,12 +6,15 @@
 #define OMENU_UTILS_H
 
 namespace Utils {
+#ifdef _WIN32
     HMODULE GetCurrentImageBase();
 
     HWND GetProcessWindow();
 
     int ConvertToNonSRGBFormat(int format);
+#endif
 
+    // can't unload a preloaded lib on Linux, this just stops the overlay and the hooks pass everything through
     void UnloadDLL();
 }
 

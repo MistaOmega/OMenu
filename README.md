@@ -1,7 +1,7 @@
 <h1 align="center">OMenu️</h1>
 <p align="center">
 <img alt="Static Badge" src="https://img.shields.io/badge/Language-C++-61DAFB?logo=c%2B%2B">
-<img alt="Static Badge" src="https://img.shields.io/badge/Platform-Windows-blue">
+<img alt="Static Badge" src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-blue">
  <img alt="Version" src="https://img.shields.io/badge/version-1.3.3-hotpink.svg?cacheSeconds=2592000" />
   <a href="https://choosealicense.com/licenses/mit/" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
@@ -16,6 +16,8 @@
   - DirectX11
   - DirectX12
   - OpenGL
+  - Linux native: OpenGL via GLX or EGL (desktop GL, not GLES)
+  - Proton/Wine: everything above, via the Windows DLL
   
 ## Purpose
 This is a menu template upon which you can build any mod menu you like \
@@ -32,6 +34,26 @@ Rendering::SetFramework(Framework::DIRECTX9);
 - Build and inject the DLL into your game, ensure you build for the correct platform, x86 for 32 bit games, x64 for 64 bit games
 - Proceed to build your menu from this framework
 
+## Linux
+
+### Proton / Wine games
+Proton games are Windows processes, so they use the Windows DLL. Cross-compile it with MinGW (`sudo pacman -S mingw-w64-gcc` on Arch, `mingw-w64` on Debian/Ubuntu):
+```sh
+cmake --preset mingw-x64 && cmake --build --preset mingw-x64   # build/mingw-x64/OMenu.dll
+```
+Use `mingw-x86` for 32-bit games. Set the framework in library.cpp to what the game uses (DirectX goes through DXVK/VKD3D, which is fine), then inject it with a Windows injector running inside the same Wine prefix.
+
+### Native Linux games
+```sh
+cmake --preset linux-x64 && cmake --build --preset linux-x64   # build/linux-x64/libOMenu.so
+```
+Load it with `LD_PRELOAD`, e.g. as Steam launch options: `LD_PRELOAD=/path/to/libOMenu.so %command%`. There's no framework to set: it hooks GLX and EGL swaps automatically. Don't preload it into Proton games; use the DLL.
+
+Linux limitations:
+- OpenGL only. GLES and Vulkan games get no overlay.
+- Input is polled from X11 (XWayland is fine), so the game still receives your clicks and keys while the menu is open. Pure-Wayland games get the overlay but no hotkeys or mouse input.
+- END / EXIT hides the overlay for the rest of the session; a preloaded library can't be unloaded.
+
 ## Key information
 - You'll find the menu style under menu->menu.cpp->CreateStyle()
 - Menu rendering is done within menu->menu.cpp->Render(), this is where you'll notice the menu button being drawn. Your menu design will go here, move it to a seperate function if you wish.
@@ -42,7 +64,7 @@ PRINT_CUSTOM_COLOR(FOREGROUND_RED, "[YourMenuName]", "ESP Loaded");
 PRINT_CUSTOM("[YourMenuName]", "ESP Loaded");
 ```
 Which will print `[YourMenuName] ESP Loaded` in red, and your normal terminal background color respectively
-- This was written in JetBrain's CLion using CMakeLists, which defines build instructions for the project
+- This was written in JetBrain's CLion using CMakeLists, which defines build instructions for the project. `CMakePresets.json` has presets for Linux and MinGW builds
 
 ## How it works
 

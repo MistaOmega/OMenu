@@ -12,6 +12,21 @@ static DWORD __stdcall _UnloadDLL(LPVOID lpParam) {
     return 0;
 }
 
+static BOOL CALLBACK FindMainWindow(HWND handle, LPARAM lParam) {
+    const auto isMainWindow = [](HWND hwnd) {
+        return GetWindow(hwnd, GW_OWNER) == nullptr && IsWindowVisible(hwnd);
+    };
+
+    DWORD pID = 0;
+    GetWindowThreadProcessId(handle, &pID);
+
+    if (GetCurrentProcessId() != pID || !isMainWindow(handle) || handle == GetConsoleWindow())
+        return TRUE;
+
+    *reinterpret_cast<HWND *>(lParam) = handle;
+    return FALSE;
+}
+
 namespace Utils {
     void UnloadDLL() {
         HANDLE hThread = CreateThread(nullptr, 0, _UnloadDLL, nullptr, 0, nullptr);
@@ -26,20 +41,7 @@ namespace Utils {
         HWND hWnd = nullptr;
 
         while (!hWnd) {
-            EnumWindows([](HWND handle, LPARAM lParam) -> BOOL {
-                const auto isMainWindow = [](HWND hwnd) {
-                    return GetWindow(hwnd, GW_OWNER) == nullptr && IsWindowVisible(hwnd);
-                };
-
-                DWORD pID = 0;
-                GetWindowThreadProcessId(handle, &pID);
-
-                if (GetCurrentProcessId() != pID || !isMainWindow(handle) || handle == GetConsoleWindow())
-                    return TRUE;
-
-                *reinterpret_cast<HWND *>(lParam) = handle;
-                return FALSE;
-            }, reinterpret_cast<LPARAM>(&hWnd));
+            EnumWindows(FindMainWindow, reinterpret_cast<LPARAM>(&hWnd));
 
             if (!hWnd) {
                 PRINT("Waiting for window to appear.\n");

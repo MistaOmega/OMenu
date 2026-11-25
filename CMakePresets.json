@@ -1,0 +1,47 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo" }
+    },
+    {
+      "name": "linux-x64",
+      "displayName": "Linux x64 (.so for native games)",
+      "inherits": "base",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+    },
+    {
+      "name": "linux-x86",
+      "displayName": "Linux x86 (.so for native 32-bit games, needs lib32-libxcb)",
+      "inherits": "base",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" },
+      "cacheVariables": {
+        "CMAKE_C_FLAGS": "-m32",
+        "CMAKE_CXX_FLAGS": "-m32",
+        "CMAKE_LIBRARY_PATH": "/usr/lib32"
+      }
+    },
+    {
+      "name": "mingw-x64",
+      "displayName": "MinGW x64 (Windows DLL for 64-bit Windows/Proton games)",
+      "inherits": "base",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/mingw-w64-x86_64.cmake"
+    },
+    {
+      "name": "mingw-x86",
+      "displayName": "MinGW x86 (Windows DLL for 32-bit Windows/Proton games)",
+      "inherits": "base",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/mingw-w64-i686.cmake"
+    }
+  ],
+  "buildPresets": [
+    { "name": "linux-x64", "configurePreset": "linux-x64" },
+    { "name": "linux-x86", "configurePreset": "linux-x86" },
+    { "name": "mingw-x64", "configurePreset": "mingw-x64" },
+    { "name": "mingw-x86", "configurePreset": "mingw-x86" }
+  ]
+}
